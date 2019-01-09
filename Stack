@@ -1,0 +1,54 @@
+#include <iostream>
+#include "assert.h"
+using namespace std;
+
+struct Node {
+    int value;
+    Node * next;
+    Node(int value): value(value), next(nullptr){}
+};
+
+class Stack {
+    Node * top;
+    public: 
+    Stack(){
+        top = nullptr;
+    }
+    void push(int value) {
+        Node * node = new Node(value);
+        if (!top) {
+            top = node;
+        } else {
+            node->next = top;
+            top = node;
+        }
+    }
+    
+    Node * pop() {
+        Node * retval = nullptr;
+        if (top) {
+            retval = top;
+            top = top->next;
+            retval->next = nullptr;
+        }
+        return retval;
+    }
+};
+
+int main()
+{
+   Stack stack;
+   assert(stack.pop() == nullptr);
+   stack.push(1);
+   stack.push(2);
+   Node *node = stack.pop();
+   assert(node->value == 2);
+   assert(node->next == nullptr);
+   node = stack.pop();
+   assert(node->value == 1);
+   assert(node->next == nullptr);
+   assert(stack.pop() == nullptr);
+   
+   cout << "Everything is good" << endl;
+   return 0;
+}
