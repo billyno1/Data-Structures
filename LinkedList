@@ -1,0 +1,159 @@
+
+#include <iostream>
+#include "assert.h"
+using namespace std;
+
+struct Node{
+    int value;
+    Node * next;
+    Node(int value):value(value), next(nullptr){}
+};
+
+class LinkedList{
+    Node * front;
+    Node * end;
+public:    
+    LinkedList():front(nullptr), end(nullptr){}
+    
+    // insert to the beginning of the linked list ;
+    void insert(int value) {
+        Node * node = new Node(value);
+        if(!front) {
+            front = node;
+        } else {
+            node->next = front;
+            front = node;
+        }
+        if(!end) {
+            end = node;
+        }
+    }
+    
+    // delete fron the beginning of the linked list
+    bool deleteFront() {
+        if(!front) {
+            assert (end == nullptr);
+            return false;
+        } else {
+            Node * node = front;
+            front = front->next;
+            if(!front) {
+                end = nullptr;
+            }
+            delete node;
+            node = nullptr;
+            return true;
+        }
+    }
+    
+    bool deleteNode(int value) {
+        Node * node = extract(value);
+        if (node) {
+            delete node;
+            node = nullptr;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    Node * extract (int value) {
+        Node * retval = nullptr;
+        Node * node = front;
+        Node * preNode = nullptr;
+        while (node) {
+            if (node->value == value) {
+                retval = node;
+                if (preNode) {
+                    preNode->next = node->next;
+                }  else {
+                    front = front->next;
+                }
+                retval->next = nullptr;
+                return retval;
+            } else {
+                preNode = node;
+                node = node->next;
+            }
+        }
+        return nullptr;
+    }
+    
+    bool search(int value) {
+        Node * node = front;
+        while(node) {
+            if(node->value == value) {
+                return true;
+            }
+            node = node->next;
+        }
+        return false;
+    }
+    
+    void display() {
+        Node * node = front;
+        while(node) {
+            cout << node->value << "->";
+            node = node->next;
+        }
+        cout << "null" << endl;
+    }
+};
+
+int main()
+{
+    LinkedList llist;
+    Node * node;
+    
+    // test search
+    assert(llist.search(1) == false);
+    assert(llist.search(2) == false);
+    llist.insert(1);
+    assert(llist.search(1) == true);
+    assert(llist.search(2) == false);
+    
+    // test extract
+    llist.insert(2);
+    llist.insert(3);
+    node = llist.extract(1);
+    assert(node && node->value == 1);
+    node = llist.extract(1);
+    assert(node == nullptr);
+    node = llist.extract(3);
+    assert(node && node->value == 3);
+    node = llist.extract(3);
+    assert(!node);
+    node = llist.extract(2);
+    assert(node && node->value == 2);
+    
+    // test deleteNode
+    llist.insert(1);
+    llist.insert(2);
+    llist.insert(3);
+    assert(llist.deleteNode(4) == false);
+    assert(llist.deleteNode(3) == true);
+    assert(llist.deleteNode(3) == false);
+    assert(llist.deleteNode(2) == true);
+    assert(llist.deleteNode(1) == true);
+    assert(llist.deleteNode(1) == false);
+    assert(llist.deleteNode(0) == false);
+    
+    // test deleteFront
+    llist.insert(1);
+    llist.insert(2);
+    llist.insert(3);
+    llist.display();
+    assert(llist.deleteFront() == true);
+    llist.display();
+    assert(llist.deleteFront() == true);
+    llist.display();
+    assert(llist.deleteFront() == true);
+    llist.display();
+    assert(llist.deleteFront() == false);
+    llist.display();
+    assert(llist.deleteFront() == false);
+    llist.display();
+    
+    cout << "everything is good" << endl;
+    return 0;
+}
