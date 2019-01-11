@@ -1,0 +1,69 @@
+
+#include <iostream>
+#include "assert.h"
+using namespace std;
+
+struct Node{
+    int value;
+    Node * next;
+    Node(int value):value(value), next(nullptr){}
+};
+
+class Queue{
+    Node * front;
+    Node * end;
+public:    
+    Queue():front(nullptr), end(nullptr){}
+    void enQueue(int value) {
+        Node *node = new Node(value);
+        if (!end) {
+            end = node;
+        } else {
+            end->next = node;
+            end = node;
+        }
+        
+        if (!front) {
+            front = node;
+        } 
+    }
+    
+    Node * deQueue() {
+        if (!front) {
+            assert (end == nullptr);
+            return nullptr;
+        } else {
+            Node * retval = front;
+            front = front->next;
+            retval->next = nullptr;
+            if(front == nullptr) {
+                end = nullptr;
+            }
+            return retval;
+        }
+    }
+};
+
+int main()
+{
+    Queue queue;
+    
+    
+    assert (queue.deQueue() == nullptr);
+    queue.enQueue(1);
+    queue.enQueue(2);
+    
+    Node *node = queue.deQueue();
+    assert (node->value == 1);
+    delete node;
+    
+    node = queue.deQueue();
+    assert (node->value == 2);
+    delete node;
+    
+    node = queue.deQueue();
+    assert (node == nullptr);
+    
+    cout << "everything is good" << endl;
+    return 0;
+}
